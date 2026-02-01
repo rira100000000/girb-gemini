@@ -2,6 +2,8 @@
 
 Google Gemini LLM provider for [girb](https://github.com/rira100000000/girb) (AI-powered IRB assistant).
 
+[日本語版 README](README_ja.md) (AI-powered IRB assistant).
+
 ## Installation
 
 Add to your Gemfile:
