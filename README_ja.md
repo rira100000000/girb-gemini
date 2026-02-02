@@ -19,32 +19,32 @@ gem install girb girb-gemini
 
 ## セットアップ
 
-APIキーを設定:
-
-```bash
-export GEMINI_API_KEY=your-api-key
-```
+### 方法1: ~/.irbrcで設定（推奨）
 
 `~/.irbrc` に追加:
-
-```ruby
-require 'girb-gemini'
-```
-
-これだけです！`GEMINI_API_KEY`が設定されていれば自動でプロバイダーが設定されます。
-
-## 手動設定
 
 ```ruby
 require 'girb-gemini'
 
 Girb.configure do |c|
   c.provider = Girb::Providers::Gemini.new(
-    api_key: ENV['GEMINI_API_KEY'],
-    model: 'gemini-2.5-flash'  # デフォルト
+    api_key: 'your-api-key',
+    model: 'gemini-2.5-flash'
   )
 end
 ```
+
+通常の `irb` コマンドで使用できます。
+
+### 方法2: 環境変数で設定
+
+```bash
+export GIRB_PROVIDER=girb-gemini
+export GIRB_MODEL=gemini-2.5-flash  # オプション、デフォルトは gemini-2.5-flash
+export GEMINI_API_KEY=your-api-key
+```
+
+`girb` コマンドで起動します。
 
 ## 利用可能なモデル
 
