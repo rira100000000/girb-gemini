@@ -4,52 +4,85 @@
 
 ## インストール
 
+### Railsプロジェクトの場合
+
 Gemfileに追加:
 
 ```ruby
-gem 'girb'
-gem 'girb-gemini'
+group :development do
+  gem 'girb-gemini'
+end
 ```
 
-または直接インストール:
+そして実行:
 
 ```bash
-gem install girb girb-gemini
+bundle install
 ```
 
-## セットアップ
-
-### 方法1: ~/.irbrcで設定（推奨）
-
-`~/.irbrc` に追加:
+プロジェクトルートに `.girbrc` ファイルを作成:
 
 ```ruby
+# .girbrc
 require 'girb-gemini'
 
 Girb.configure do |c|
   c.provider = Girb::Providers::Gemini.new(
-    api_key: 'your-api-key',
+    api_key: ENV['GEMINI_API_KEY'],
     model: 'gemini-2.5-flash'
   )
 end
 ```
 
-通常の `irb` コマンドで使用できます。
+これで `rails console` が自動的にgirbを読み込みます！
 
-### 方法2: 環境変数で設定
+### 非Railsプロジェクトの場合
+
+グローバルにインストール:
 
 ```bash
-export GIRB_PROVIDER=girb-gemini
-export GIRB_MODEL=gemini-2.5-flash  # オプション、デフォルトは gemini-2.5-flash
-export GEMINI_API_KEY=your-api-key
+gem install girb girb-gemini
 ```
 
-`girb` コマンドで起動します。
+プロジェクトディレクトリに `.girbrc` ファイルを作成:
+
+```ruby
+# .girbrc
+require 'girb-gemini'
+
+Girb.configure do |c|
+  c.provider = Girb::Providers::Gemini.new(
+    api_key: ENV['GEMINI_API_KEY'],
+    model: 'gemini-2.5-flash'
+  )
+end
+```
+
+`irb` の代わりに `girb` コマンドを使用します。
+
+## 設定
+
+APIキーを環境変数として設定:
+
+```bash
+export GEMINI_API_KEY=your-api-key
+```
 
 ## 利用可能なモデル
 
 - `gemini-2.5-flash` (デフォルト) - 高速で効率的
 - `gemini-2.5-pro` - より高性能、やや遅い
+
+## 代替: 環境変数での設定
+
+`girb` コマンドでは、`.girbrc` が見つからない場合に環境変数で設定することもできます:
+
+```bash
+export GIRB_PROVIDER=girb-gemini
+export GIRB_MODEL=gemini-2.5-flash  # オプション、デフォルトは gemini-2.5-flash
+export GEMINI_API_KEY=your-api-key
+girb
+```
 
 ## ライセンス
 
