@@ -13,7 +13,7 @@ module Girb
         @model = model
       end
 
-      def chat(messages:, system_prompt:, tools:)
+      def chat(messages:, system_prompt:, tools:, binding: nil)
         contents = convert_messages(messages)
         tools_param = build_tools_param(tools)
 
