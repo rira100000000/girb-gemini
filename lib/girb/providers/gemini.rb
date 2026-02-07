@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require "gemini"
+# ruby-gemini-apiがgemini/live→websocket→websocket-native(オプション)を
+# requireする過程でLoadErrorが発生しrescueされるが、
+# ExceptionCaptureのTracePointに捕捉される場合があるためクリアする
+Girb::ExceptionCapture.clear if defined?(Girb::ExceptionCapture)
 require "girb/providers/base"
 
 module Girb
@@ -41,15 +45,16 @@ module Girb
           when :assistant
             { role: "model", parts: [{ text: msg[:content] }] }
           when :tool_call
-            {
-              role: "model",
-              parts: [{
-                function_call: {
-                  name: msg[:name],
-                  args: msg[:args]
-                }
-              }]
+            part = {
+              functionCall: {
+                name: msg[:name],
+                args: msg[:args]
+              }
             }
+            if msg.dig(:metadata, :thought_signature)
+              part[:thoughtSignature] = msg[:metadata][:thought_signature]
+            end
+            { role: "model", parts: [part] }
           when :tool_result
             {
               role: "user",
@@ -109,12 +114,27 @@ module Girb
       def parse_function_calls(response)
         return [] unless response.function_calls&.any?
 
+        # Extract thought_signature from response parts
+        thought_signature = extract_thought_signature(response)
+
         response.function_calls.map do |fc|
-          {
+          result = {
             name: fc["name"],
             args: fc["args"] || {}
           }
+          if thought_signature
+            result[:metadata] = { thought_signature: thought_signature }
+          end
+          result
         end
+      end
+
+      def extract_thought_signature(response)
+        return nil unless response.respond_to?(:first_thought_signature)
+
+        response.first_thought_signature
+      rescue
+        nil
       end
     end
   end

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0] - 2026-02-07
+
+### Fixed
+
+- Fix Gemini 3 thought_signature error on function calls
+- Preserve thought_signature from API response and include it when sending function call history back to the API
+- Clear false-positive websocket-native LoadError from ExceptionCapture after loading ruby-gemini-api
+
 ## [0.1.1] - 2026-02-03
 
 ### Added
