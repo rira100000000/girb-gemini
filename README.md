@@ -74,6 +74,24 @@ export GEMINI_API_KEY=your-api-key
 
 - `gemini-2.5-flash` (default) - Fast and efficient
 - `gemini-2.5-pro` - More capable, slower
+- `gemini-3-flash-preview` - Next generation, fast
+- `gemini-3-pro-preview` - Next generation, more capable
+
+## Web Search
+
+girb-gemini includes a built-in web search tool powered by Google Search. This allows the AI to retrieve up-to-date information during your IRB session.
+
+Web search is **enabled by default**. To disable it:
+
+```ruby
+Girb.configure do |c|
+  c.provider = Girb::Providers::Gemini.new(
+    api_key: ENV['GEMINI_API_KEY'],
+    model: 'gemini-2.5-flash',
+    google_search: false
+  )
+end
+```
 
 ## Alternative: Environment Variable Configuration
 

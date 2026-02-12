@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0] - 2026-02-12
+
+### Added
+
+- Web search tool powered by Google Search grounding
+- Support for gemini-3-flash-preview and gemini-3-pro-preview models
+
 ## [0.2.0] - 2026-02-07
 
 ### Fixed
