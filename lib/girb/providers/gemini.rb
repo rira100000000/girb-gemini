@@ -12,9 +12,16 @@ module Girb
     class Gemini < Base
       DEFAULT_MODEL = "gemini-2.5-flash"
 
-      def initialize(api_key:, model: DEFAULT_MODEL)
+      def initialize(api_key:, model: DEFAULT_MODEL, google_search: true)
         @client = ::Gemini::Client.new(api_key)
         @model = model
+        @google_search = google_search
+
+        if @google_search
+          setup_web_search_tool
+        else
+          disable_web_search_tool
+        end
       end
 
       def chat(messages:, system_prompt:, tools:, binding: nil)
@@ -135,6 +142,19 @@ module Girb
         response.first_thought_signature
       rescue
         nil
+      end
+
+      def setup_web_search_tool
+        require_relative "web_search_tool"
+        WebSearchTool.client = @client
+        WebSearchTool.model = @model
+        Girb::Tools.register(WebSearchTool)
+      end
+
+      def disable_web_search_tool
+        return unless defined?(WebSearchTool)
+
+        WebSearchTool.client = nil
       end
     end
   end
