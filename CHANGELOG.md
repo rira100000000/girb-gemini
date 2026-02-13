@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1] - 2026-02-12
+
+### Fixed
+
+- Detect abnormal finish reasons (e.g., `MALFORMED_FUNCTION_CALL`) from Gemini API
+  - Set `response.error` with the finish reason and `response.text` with the LLM's failed output
+  - Enables girb to feed the error back to the LLM for self-correction
+
 ## [0.3.0] - 2026-02-12
 
 ### Added

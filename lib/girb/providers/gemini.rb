@@ -108,14 +108,23 @@ module Girb
       def parse_response(response)
         return Response.new(error: "No response") unless response
 
+        if response.respond_to?(:error) && response.error
+          return Response.new(error: response.error, raw_response: response)
+        end
+
+        # Check for abnormal finish reasons (e.g., MALFORMED_FUNCTION_CALL)
+        finish_reason, finish_message = extract_finish_info(response)
+        if finish_reason && finish_reason != "STOP" && finish_reason != "MAX_TOKENS"
+          return Response.new(
+            error: "#{finish_reason}: #{finish_message}",
+            text: finish_message || "",
+            raw_response: response
+          )
+        end
+
         text = response.text
         function_calls = parse_function_calls(response)
-
-        if response.respond_to?(:error) && response.error
-          Response.new(error: response.error, raw_response: response)
-        else
-          Response.new(text: text, function_calls: function_calls, raw_response: response)
-        end
+        Response.new(text: text, function_calls: function_calls, raw_response: response)
       end
 
       def parse_function_calls(response)
@@ -134,6 +143,18 @@ module Girb
           end
           result
         end
+      end
+
+      def extract_finish_info(response)
+        return nil unless response.respond_to?(:candidates)
+
+        candidates = response.candidates
+        return nil unless candidates.is_a?(Array) && candidates.first
+
+        candidate = candidates.first
+        [candidate["finishReason"], candidate["finishMessage"]]
+      rescue
+        nil
       end
 
       def extract_thought_signature(response)
